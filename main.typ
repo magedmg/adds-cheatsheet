@@ -1,6 +1,12 @@
-#set page(margin: 0cm, columns: 2)
-#set text(size: 6pt, font: "Roboto")
-#set table(inset: 3pt, align: horizon + center)
+#set page(margin: 0cm, columns: 3)
+#set text(size: 5pt, font: "Roboto")
+#set table(inset: 1.8pt, align: horizon + center, stroke: 0.4pt)
+#set heading(numbering: "I.1")
+#show raw.where(block: true): block.with(
+  fill: luma(240),
+  inset: 2pt,
+  radius: 2pt,
+)
 
 #table(
   columns: 6,
@@ -18,8 +24,8 @@
 
 #table(
   columns: 8,
-  [], table.cell(colspan: 3)[*Worst*], table.cell(colspan: 3)[*Average*], table.cell(rowspan: 2)[*Space*],
-  [], [*Insert*], [*Delete*], [*Search*], [*Insert*], [*Delete*], [*Search*],
+  table.cell(rowspan: 2)[], table.cell(colspan: 3)[*Worst*], table.cell(colspan: 3)[*Average*], table.cell(rowspan: 2)[*Space*],
+  [*Insert*], [*Delete*], [*Search*], [*Insert*], [*Delete*], [*Search*],
   [*Vector Ordered*],table.cell(colspan: 2)[$O(n)$],[$O(log(n))$],table.cell(colspan: 2)[$O(n)$],[$O(log(n))$],
   table.cell(rowspan: 5)[$O(n)$],
   [*Vector Unordered*],[$O(1)$\*],table.cell(colspan: 2, rowspan: 2)[$O(n)$],
@@ -38,3 +44,5 @@
 )
 
 #image("complexity.png")
+
+#include "quiz.typ"

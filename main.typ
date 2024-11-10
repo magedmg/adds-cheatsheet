@@ -39,8 +39,7 @@
   table.cell(
     colspan: 8,
     align: left,
-  )[#text(size: 0.8em)[\*: Amortised - ie over a sequence of this operation. Resizing vector $O(n)$ \
-      \*\*: Remove highest priority]]
+  )[#text(size: 0.8em)[\*: Amortised - ie over a sequence of this operation. Resizing vector $O(n)$ \ \*\*: Remove highest priority]]
 )
 
 #image("complexity.png")

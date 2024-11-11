@@ -1,4 +1,5 @@
-#set page(margin: 0cm, columns: 2)
+#set page(margin: 0cm, columns: 3)
+#set columns(gutter: 0pt)
 #set text(size: 8pt, font: "Roboto")
 #set table(inset: 2pt, align: horizon + center, stroke: 0.4pt)
 #set heading(numbering: "I.1")
@@ -6,62 +7,34 @@
   fill: luma(240),
   inset: 0.5em,
   radius: 2pt,
+  sticky: true,
 )
 
-#table(
-  columns: 6,
-  [], [*Best*], [*Average*], [*Worst*], [*Space*], [*Stable*],
-  [*Selection*], table.cell(colspan: 3)[$O(n^2)$], [$O(1)$], [],
-  [*Insertion*], [$O(n)$], table.cell(colspan: 2)[$O(n^2)$], [$O(1)$], [#sym.checkmark],
-  [*Bubble*], table.cell(colspan: 3)[$O(n^2)$], [$O(1)$], [#sym.checkmark],
-  [*Merge*], table.cell(colspan: 3)[$O(n log(n))$], [$O(n)$], [#sym.checkmark],
-  [*Quick*], table.cell(colspan: 2)[$O(n log(n))$], [$O(n^2)$], [$O(log(n))$], [],
-  [*Bucket*], [$O(n)$], [$O(n+k)$ \ #text(0.8em)[(k: numbers of buckets)]], [$O(n^2)$], [$O(n+k)$], [#sym.checkmark],
-  [*Counting*], table.cell(colspan: 3)[$O(n+k)$ \ #text(0.8em)[(k: range of the input values, max-min)]],
-  [$O(n+k)$], [#sym.checkmark],
-  [*Heap*], table.cell(colspan: 3)[$O(n log(n))$], [$O(1)$], [],
-)
+= Recursion
 
-#table(
-  columns: 8,
-  table.cell(rowspan: 2)[], table.cell(colspan: 3)[*Worst*], table.cell(colspan: 3)[*Average*], table.cell(rowspan: 2)[*Space*],
-  [*Insert*], [*Delete*], [*Search*], [*Insert*], [*Delete*], [*Search*],
-  [*Vector Ordered*],table.cell(colspan: 2)[$O(n)$],[$O(log(n))$],table.cell(colspan: 2)[$O(n)$],[$O(log(n))$],
-  table.cell(rowspan: 5)[$O(n)$],
-  [*Vector Unordered*],[$O(1)$\*],table.cell(colspan: 2, rowspan: 2)[$O(n)$],
-  [$O(1)$\*],table.cell(colspan: 2, rowspan: 2)[$O(n)$],
-  [*Linked List*],[$O(1)$],[$O(1)$],
-  [*Binary Search Tree*],table.cell(colspan: 3)[$O(n)$],table.cell(colspan: 3)[$O(log(n))$],
-  [*Balanced BST (RBT)*],table.cell(colspan: 6)[$O(log(n))$],
-  [*Priority Queues*], [*Insert*], [*RMH\*\**], [*Peek*], [*Insert*], [*RMH\*\**], [*Peek*], table.cell(rowspan: 3)[],
-  [*Linked List*],[$O(n)$],table.cell(colspan: 2)[$O(1)$],[$O(n)$],table.cell(colspan: 2)[$O(1)$],
-  [*Heap*],table.cell(colspan: 2)[$O(log(n))$],[$O(1)$],[$O(1)$],[$O(log(n))$],[$O(1)$],
-  table.cell(
-    colspan: 8,
-    align: left,
-  )[#text(size: 0.8em)[\*: Amortised - ie over a sequence of this operation. Resizing vector $O(n)$ \ \*\*: Remove highest priority]]
-)
+- *Tail recursion* uses less memory than non-tail recursion.
 
-#image("complexity.png")
+== Tail Recursion
+=== Cost of recursion
+- Each call to a function adds another frame on the stack
+- Each frame contains local variables and parameters and where to return the result
+=== Reducing what needs to be stored
+- If we can guarantee we won't need them, we can free the memory for the local variables and parameters.
+- We won't need them as long as *we do not use them after the recursive call*.
+- Tail recursive functions have the *recursive call as the last thing the function does before it returns*.
 
 = Complexity
 
 == Master Theorem
 
-#grid(
-  columns: 2,
-  column-gutter: 2pt,
-  [
-    $T(n)=a T(n / b) + f(n)$
+$T(n)=a T(n / b) + f(n)$
 
-    $T(x)=cases( Theta(n^d) "if" a<b^d, Theta(n^d log(n)) "if" a=b^d, Theta(n^(log_b(n))) "if" a>b^d)$
-  ],
-  [
-    *a*: number of subproblems in the recursion\
-    *n/b*: size of each subproblem\
-    *d*: the exponent in the cost of the work done outside the recursive calls, specifically in the non-recursive part of the algorithm (like splitting or merging the problem)\
-  ],
-)
+$T(x)=cases( Theta(n^d) "if" a<b^d, Theta(n^d log(n)) "if" a=b^d, Theta(n^(log_b(n))) "if" a>b^d)$
+
+*a*: number of subproblems in the recursion\
+*n/b*: size of each subproblem\
+*d*: the exponent in the cost of the work done outside the recursive calls, specifically in the non-recursive part of the algorithm (like splitting or merging the problem)\
+
 e.g. *Binary Search* a=1 b=2 d=0 $log(n)$ *Merge Sort* a=2 b=2 d=1 $n log(n)$
 
 == Bound
@@ -120,32 +93,28 @@ for (int i = array.size() - 1; i > 0; i--) {
 ```
 
 == Merge
-#grid(
-  columns: (3fr, 7fr),
-  image("merge-sort.png"),
-  [
-    ```cpp
-    if (array.size() == 1) return array;
-    // Sort left and right subarrays
-    int mid = array.size() / 2;
-    // ... Define left and right arrays
-    vector<int> sortedRightArray = sort(rightArray);
-    vector<int> sortedLeftArray = sort(leftArray);
-    // Merge left and right subarrays
-    vector<int> result;
-    int l = 0, r = 0;
-    while (l < sortedLeftArray.size() && r < sortedRightArray.size()) {
-      if (sortedLeftArray.at(l) < sortedRightArray.at(r)) {
-        result.push_back(sortedLeftArray.at(l)); l++;
-      } else {
-        result.push_back(sortedRightArray.at(r)); r++;
-      }
-    }
-    // ... Add remaining elements form sortedLeftArray or sortedRightArray
-    return result;
-    ```
-  ],
-)
+#image("merge-sort.png", width: 80%)
+
+```cpp
+if (array.size() == 1) return array;
+// Sort left and right subarrays
+int mid = array.size() / 2;
+// ... Define left and right arrays
+vector<int> sortedRightArray = sort(rightArray);
+vector<int> sortedLeftArray = sort(leftArray);
+// Merge left and right subarrays
+vector<int> result;
+int l = 0, r = 0;
+while (l < sortedLeftArray.size() && r < sortedRightArray.size()) {
+  if (sortedLeftArray.at(l) < sortedRightArray.at(r)) {
+    result.push_back(sortedLeftArray.at(l)); l++;
+  } else {
+    result.push_back(sortedRightArray.at(r)); r++;
+  }
+}
+// ... Add remaining elements form sortedLeftArray or sortedRightArray
+return result;
+```
 
 == Quick
 ```cpp
@@ -163,3 +132,7 @@ swap(array.at(pivotIndex), pivot);
 sort(array, start, pivotIndex - 1);
 sort(array, pivotIndex + 1, end);
 ```
+
+#pagebreak()
+#set page(columns: 2)
+#include "complexity.typ"

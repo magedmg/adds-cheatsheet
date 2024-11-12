@@ -15,6 +15,9 @@
   radius: 2pt,
 )
 #let redt(t) = text(fill: red)[#t]
+#show emph: t => {
+  text(style: "italic")[#underline(t)]
+}
 
 = SOLID
 
@@ -429,6 +432,46 @@ rotate left, swap colours of parent and grandparent
 rotate right, then left, swap colours of new node and grandparent
 #image("rbt/insert.png")
 
+== Delete
+=== Simple Cases
+- If a node is #redt[red] with nullptr child (no children)
+- If a node has 1 child and *either* _the node_ OR _child_ (but not both) is #redt[red]
+1. Delete node 2. Updated node #sym.arrow *black* (node replaced the deleted node)
+
+=== Double Black
+If both _node to be deleted_ AND _child_ are *black* (or the node has no children), the _updated node_ becomes *double black*
+
+- n's _sibling_ is *black*
+  - with at least one #redt[*red*] _child_
+    + Rotate (as per insertion following path to #redt[red] _child_)
+    + Recolour #redt[red] _child_ to *black*, _sibling_ to #redt[red]
+  - with _all children_ *black*
+    + Recolour sibling to #redt[red]
+    + Push *black* up (*black* _parent_ #sym.arrow *double black*, #redt[red] _parent_ #sym.arrow *black*)
+- n's _sibling_ is #redt[*red*]
+  + Rotate
+  + Recolour _Sibling_ to *black* _Parent_ to #redt[red]
+
+= Selecting Data Structures and Algorithmic Strategies Quiz
+==
+- *Heap Sort*: Transform and Conquer
+- *Memoisation*: Synamic Programming
+- *Selection Sort*: Brute Force
+- *Quick Sort*: Divide and Conquer
+==
+You need to store a list of words and know that words that were recently searched for are likely to be searched for again. *ANSWER: Linked List*
+
+$O(n)$ to find a word and when a word is found, move it to the head (most recent will be at front of list) $O(1)$. The most recently searched for words will always be at the start of the list, improving the average case to find these words $O(1)$ if most recently searched word.
+==
+- *Linear Structures*: Queue, Linked List, Array, Heap, Stack, Vector
+- *Non-linear Structures*: Red-Black Tree, Binary Search Tree, Trie
+==
+Which of the following C++ containers could be shuffled using the C++ shuffle function from the algorithm library? *ANSWER: vector, array*
+==
+- `list`: Doubly Linked List
+- `priority_queue`: Heap
+- `map` `set`: Red-Black Tree (balanced binary search tree)
+
 #pagebreak()
 #set page(columns: 2)
 #image("bigo/bigo.jpg")
@@ -437,3 +480,6 @@ rotate right, then left, swap colours of new node and grandparent
 #image("bigo/littleo.jpg")
 #image("complexity.png")
 #include "complexity.typ"
+
+==
+We are implementing a scheduler for choosing the next process to run on a computer. System processes, that keep the computer running are more important than user processes (someone's C++ homework); but otherwise processes should be run on a first come first served basis Assuming we decide to keep all of these processes in a single ordered array, which sorting algorithms could be used (assume the base algorithms as you learned in this course, not variations). *ANSWER: Bubble Sort, Insertion Sort, Merge Sort*

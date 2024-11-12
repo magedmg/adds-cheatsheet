@@ -402,3 +402,7 @@ maximum depth of a Heap implemented as a Tree: $O(log(n))$
 #pagebreak()
 #set page(columns: 2)
 #include "complexity.typ"
+#image("bigo.jpg")
+#image("bigomega.jpg")
+#image("bigtheta.jpg")
+#image("littleo.jpg")

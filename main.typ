@@ -373,7 +373,8 @@ For which of the following would a Trie be a good choice of Tree data structure
 - Its right child is at $2*i+1$
 - Its parent is at $floor(i/2)$
 
-== operations
+== Operations
+Swap the node with the largest(smallest) child until the heap property is satisfied
 - *Insert*: bottom to top
 - *Delete*: top to bottom
 - *Heapify*: bottom to top (back to front)

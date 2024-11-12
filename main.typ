@@ -7,7 +7,6 @@
   fill: luma(240),
   inset: 0.5em,
   radius: 2pt,
-  sticky: true,
 )
 #show raw.where(block: false): box.with(
   fill: luma(240),
@@ -146,6 +145,7 @@ for (int i = 1; i < array.size(); i++) {
 
 == Bubble
 repeatedly compares adjacent elements and swaps them if they are in the wrong order, causing larger elements to "bubble" to the end of the array. With each pass through the list, the largest (or smallest) element settles in its correct position, and this process continues until the entire array is sorted.
+#colbreak()
 ```cpp
 for (int i = array.size() - 1; i > 0; i--) {
 		for (int j = 0; j < i; j++) {
@@ -197,6 +197,206 @@ sort(array, pivotIndex + 1, end);
 ```
 
 = Linked List & Friend Class
+
+```cpp
+template <class T>
+class Node {
+	T data;
+	Node<T>* link;
+	Node(T data) {
+		this->data = data;
+	}
+public:
+	template <class U>
+	friend class LinkedList;
+};
+
+template <class T>
+class LinkedList {
+	Node<T>* head;
+	bool isEmpty() {
+		return this->head == NULL;
+	}
+public:
+	LinkedList() {
+		this->head = NULL;
+	}
+	void insert(T value) {
+		Node<T>* newNode = new Node<T>(value);
+		newNode->link = this->head;
+		this->head = newNode;
+	}
+	void traverse() {
+		if (isEmpty()) {
+			cout << "List is empty\n";
+			return;
+		}
+		Node<T>* tmp = this->head;
+		while (tmp != NULL) {
+			cout << tmp->data << " ";
+			tmp = tmp->link;
+		}
+		cout << endl;
+	}
+};
+```
+
+== Quiz
+===
+- #false-option[Linked lists require at least two methods for insertion, one to cover addition at the front and another for addition at an arbitrary position.]
+- #false-option[Linked lists have $O(1)$ access to any node.]
+- Linked lists are not guaranteed to have their nodes located in adjacent blocks of memory.
+- Linked lists have an aggregation relationship with nodes.
+===
+- A singly linked list has all the nodes linking in one direction.
+- #false-option[A singly linked list can have a tail as well as head. When it does, insertion and deletion at both either end becomes $O(1)$]
+- Insertion/deletion from the front of a singly linked list is $O(1)$.
+- #false-option[A singly linked list cannot have a tail member variable that records where the last node is in memory, as it violates the definition of the singly linked list.]
+
+= Stack & Queue
+
+== Stack
+- LIFO (Last-in/First-out)
+- implemented using linked lists or dynamic arrays
+- `push(item)` `pop()` `isEmpty()`
+- only have access to the top of the stack
+
+== Queue
+- FIFO (First-in/First-out)
+- usually implemented using linked lists
+- `enqueue(item)` `dequeue()` `isEmpty()`
+- You have access to both the front and back of the queue.
+
+== Quiz
+===
+- #false-option[Removing an element from a queue requires the queue to search through all of the remaining elements to update their positions and ensure that the queue is properly ordered, resulting in a time complexity of O(n).]
+- #false-option[Solving the Tower of Hanoi maps well to the queue data structure.]
+- Queues are FIFO/LILO.
+- #false-option[Since queues involve operations at both ends, they must be implemented using a doubly linked list.]
+
+===
+- #false-option[A priority queue implemented using a single queue where each node has a priority value, has both $O(n)$ insertion and $O(n)$ removal.]
+- #false-option[A priority queue with n elements that is implemented using multiple queues (with a queue for each priority) have $O(n)$ removal.]
+- A priority queue with n elements that is implemented using multiple queues (with a queue for each priority) have $O(1)$ insertion.
+- A priority queue implemented using a single queue where each node has a priority value, has either $O(n)$ insertion or $O(n)$ removal.
+==== Explanation
+- Priority queues with n nodes implemented using multiple queues, have:
+  - $O(1)$ insertion, as at the time of insertion you know what priority the node will have so you can simply find which queue it should belong to in $O(1)$, and then insert to the back of that queue in $O(1)$.
+  - $O(m)$ removal, where m is the number of queues. This is because we need to run the isEmpty function on up to m queues.
+- Priority queues implemented using one queue will either have either $O(n)$ insertion or removal. Because you have to check who the highest priority is either:
+  - At insertion, to place them in the appropriate position. They "cut" in line.
+  - At removal, to take out the appropriate item.
+
+= Tree
+
+== Tree Traversals
+- Level Order (level by level) 1, 4, 2, 6, 5, 3
+- In-order (left, root, right) 6, 4, 5, 1, 3, 2
+- Pre-order (root, left, right) 1, 4, 6, 5, 2, 3
+- Post-order (left, right, root) 6, 5, 4, 3, 2, 1
+#image("tree-traversals.png", width: 40%)
+
+== BST Delete
+- *0 child*: just delete
+- *1 child*: set parent's pointer to point to the one child
+- *2 children*: replace with in-order successor child (leftmost child of right subtree)
+
+== Trie
+#image("trie.png", width: 60%)
+- Tries are a tree data structure that are particularly suited for searching for keys that begin with a specific prefix
+- Usually, these keys are strings
+- Each path from root represents one key
+```cpp
+struct TrieNode {
+	bool isEndOfWord;
+	vector<TrieNode*> childern;
+}
+```
+=== Adding keys
+#grid(
+  columns: (7fr, 3fr),
+  [
+    - While the key forms a path in the trie, follow the trie while next key character matches the characters in trie
+    - Add remaining non-matching key characters to tree, mark node with last character as end of word
+    - Example: Insert “ape” and “apes” - nodes coloured #text(fill: red)[red] have `isEndOfWord == true`
+  ],
+  image("trie-add.png"),
+)
+#colbreak()
+=== Deleting key
+```cpp
+// If root is nullptr, key is not in the Trie
+if (!root) return nullptr;
+// If we've reached the end of the key
+if (depth == key.length()) {
+	// This node is no longer an end of a word
+	if (root->isEndOfWord) root->isEndOfWord = false;
+	// If node has no children, delete it (free memory) and return nullptr
+	if (root->children.empty()) {
+		delete root;
+		return nullptr;
+	}
+	return root;
+}
+// Recursive case for deleting in child
+char ch = key[depth];
+root->children[ch] = deleteKey(root->children[ch], key, depth + 1);
+// If no children and not end of word, delete this node
+if (root->children.empty() && !root->isEndOfWord) {
+	delete root;
+	return nullptr;
+}
+return root;
+```
+
+== Quiz
+===
+The height of a binary tree can not have a tight bound
+===
+Running time of searching a Binary Search Tree with n nodes: $Theta("height")$
+===
+The minimum number of nodes that could be in a balanced binary tree of height h: $2^h$
+===
+In a red black, we keep the same number of black nodes between a given node and any other node. The reason for this is: to ensure search is $log(n)$
+===
+For which of the following would a Trie be a good choice of Tree data structure
+- Storing key-value pairs with string keys
+- Storing a collection of unsorted strings
+- #false-option[Storing key-value pairs with integer keys]
+- #false-option[Storing a collection of unsorted integers]
+
+= Heap
+
+== Binary Tree in array
+- If a node is at index $i$
+- Its left child is at $2*i$
+- Its right child is at $2*i+1$
+- Its parent is at $floor(i/2)$
+
+== operations
+- *Insert*: bottom to top
+- *Delete*: top to bottom
+- *Heapify*: bottom to top (back to front)
+
+== Quiz
+===
+- A min-heap is a binary tree
+- In a min-heap node after deletion, the maximum levels that a parent will sift down during heapify is O(log(n))
+- #false-option[A heap can become an unbalanced tree]
+- #false-option[When traversing by level a Heap implemented as a tree, the values will be in order from smallest to largest.]
+===
+When deleting the root node, which of the following should take place to restore the Heap
+- #false-option[sift up each of the leaf nodes]
+- #false-option[copy the value of the last element to the root and heapify the root element]
+- copy the value of the last element to the root and delete the last element, heapify the root element.
+- #false-option[copy the value to the root and heapify each parent node starting from the bottom right parent working across tree to the left, level by level until the root node is heapified]
+===
+maximum depth of a Heap implemented as a Tree: $O(log(n))$
+===
+- Implementing a Heap as a vector will allow faster insertion deletion of elements compared to implementing as a Tree
+- Implementing a Heap as a vector uses less memory compared to implementing as a Tree
+- #false-option[Implementing a Heap as a vector better matches the Heap abstraction compared to implementing as a Tree]
+- #false-option[Implementing a Heap as a vector results in a lower run-time complexity for all operations compared to implementing as a Tree]
 
 #pagebreak()
 #set page(columns: 2)

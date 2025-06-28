@@ -64,6 +64,10 @@
 - We won't need them as long as *we do not use them after the recursive call*.
 - Tail recursive functions have the *recursive call as the last thing the function does before it returns*.
 
+Bad: return n x factorial\
+Good (Tail Recursive): return factorial(n, accumulator)
+Three requirements: a base case, a recursive call (the function calls itself) and the function progresses towards the base case
+
 = Complexity
 
 == Master Theorem
@@ -96,35 +100,10 @@ $f(n) = O(g(n)) "and" f(n) = Omega(g(n))$
 $exists c in RR^\*, exists n_0 in NN, "such that" forall n >= n_0 "such that" f(n) < c g(n) (abs(f(n)/g(n))<c)$\
 In other words: $limits(lim)_(n arrow.r infinity) f(n)/g(n) = 0$
 
-== Quiz
-===
-- if $f(n)=Theta(g(n)) $ then $g(n)=Theta(f(n))$
-- #redt[if $f(n)=O(n)$ then $f(n)=o(n)$]
-- if $f(n)=o(n)$ and $g(n)=o(n)$ then $f(n)+g(n)=o(n)$
-- #redt[$O(n)$ is the complexity in the worst case]
-- #redt[if $f(n)=Omega(g(n))$ and $f(n)=O(h(n))$, then $g(n)<=h(n)$ for all $n>0$]
-===
-$o(n^2)$ = $sqrt(n)$ / $1$ / $n log(n)$ / $n$
-===
-*$1$* < *$log(n)$* < $log(n^2)$ < $(log(n))^2$ < $5n log(log(n)) + 100$ < *$n$* < *$n log(n)$* < $n^1.5+1000000$ < *$n^2$* < *$n^3$* < *$2^n$* < $3^n$ < *$n!$* < *$n^n$*
-===
-- #redt[If $f(n)=O(g(n))$, then $f(n)=o(g(n))$. The opposite is not true, because Little o assumes that $f(n)$ and $g(n)$ can't be of the same order.]
-- If $f(n)=o(g(n))$, then $f(n)=O(g(n))$. The opposite is not true, because Little o assumes that $f(n)$ and $g(n)$ can't be of the same order.
-- #redt[$f(n)=o(g(n))$ if and only if $f(n)=O(g(n))$.]
-- #redt[If $f(n)=O(g(n))$ it does not mean $f(n)=o(g(n))$, and if $f(n)=o(g(n))$ it does not mean $f(n)=O(g(n))$.]
-===
-- $f(n)=Theta(g(n)) "if and only if" f(n)=O(g(n)) "and" f(n)=ohm(g(n))$
-- $n=o(n^2) "and" n=O(n^2)$
-- #redt[$"If" f(n)=ohm(n), "then" f(n)>=n "for all" n "starting from some" n_0$]
-- $"If" f(n)=o(g(n)) "and" g(n) = O(h(n)), "then" f(n)=o(h(n))$
-===
-Suppose we need to find an occurrence of the array of size m inside a larger array of size n. We know that the array of size n is sorted and consists of unique elements. What will be the time complexity of the optimal algorithm?
-- $Theta(log(n)+m)$
-
 = Sorting
 
 == Selection
-不断从未排序部分中选择最小（或最大）元素，并将其与第一个未排序元素交换，每次迭代后将排序边界向前移动一步 repeatedly selects the smallest (or largest) element from the unsorted portion of an array and swaps it with the first unsorted element, moving the sorted boundary one step forward with each iteration
+repeatedly selects the smallest (or largest) element from the unsorted portion of an array and swaps it with the first unsorted element, moving the sorted boundary one step forward with each iteration
 ```cpp
 for (int i = 0; i < array.size(); i++) {
   // Find min element from i to n-1
@@ -135,7 +114,7 @@ for (int i = 0; i < array.size(); i++) {
 ```
 
 == Insertion
-逐一将未排序部分的下一个元素插入到（不断交换）已排序部分的正确位置，逐步构建出一个已排序的数组 builds the sorted array one element at a time by repeatedly taking the next unsorted element and inserting it into its correct position in the sorted part
+builds the sorted array one element at a time by repeatedly taking the next unsorted element and inserting it into its correct position in the sorted part
 ```cpp
 for (int i = 1; i < array.size(); i++) {
   for (int j = i; j > 0; j--) {
@@ -148,7 +127,7 @@ for (int i = 1; i < array.size(); i++) {
 
 == Bubble
 repeatedly compares adjacent elements and swaps them if they are in the wrong order, causing larger elements to "bubble" to the end of the array. With each pass through the list, the largest (or smallest) element settles in its correct position, and this process continues until the entire array is sorted.
-#colbreak()
+
 ```cpp
 for (int i = array.size() - 1; i > 0; i--) {
 		for (int j = 0; j < i; j++) {
@@ -158,6 +137,8 @@ for (int i = array.size() - 1; i > 0; i--) {
 		}
 	}
 ```
+
+
 
 == Merge
 #image("merge-sort.png", width: 80%)
@@ -182,7 +163,26 @@ while (l < sortedLeftArray.size() && r < sortedRightArray.size()) {
 return result;
 ```
 
+== Quick sort
+
 == Quick
+Place the pivot element at the end of the sub-array (or start, depending on implementation).
+
+Initialize an index i (often called the "store index") to point to the beginning of the sub-array (or just before the first element). This i will keep track of where the next element smaller than the pivot should be placed.
+
+Iterate through the sub-array from the beginning up to (but not including) the pivot's current position.
+
+For each element encountered:
+
+    If the current element is less than or equal to the pivot:
+
+        Increment i.
+
+        Swap the current element with the element at index i.
+Finally, swap the pivot (which is currently at the end) with the element at i+1. This places the pivot in its final sorted position.
+The partition function returns the index of the pivot.
+
+
 ```cpp
 if (start >= end) return;
 // Select the last element as pivot
@@ -199,62 +199,11 @@ sort(array, start, pivotIndex - 1);
 sort(array, pivotIndex + 1, end);
 ```
 
+
+#colbreak()
+
 = Linked List & Friend Class
-
-```cpp
-template <class T>
-class Node {
-	T data;
-	Node<T>* link;
-	Node(T data) {
-		this->data = data;
-	}
-public:
-	template <class U>
-	friend class LinkedList;
-};
-
-template <class T>
-class LinkedList {
-	Node<T>* head;
-	bool isEmpty() {
-		return this->head == NULL;
-	}
-public:
-	LinkedList() {
-		this->head = NULL;
-	}
-	void insert(T value) {
-		Node<T>* newNode = new Node<T>(value);
-		newNode->link = this->head;
-		this->head = newNode;
-	}
-	void traverse() {
-		if (isEmpty()) {
-			cout << "List is empty\n";
-			return;
-		}
-		Node<T>* tmp = this->head;
-		while (tmp != NULL) {
-			cout << tmp->data << " ";
-			tmp = tmp->link;
-		}
-		cout << endl;
-	}
-};
-```
-
-== Quiz
-===
-- #redt[Linked lists require at least two methods for insertion, one to cover addition at the front and another for addition at an arbitrary position.]
-- #redt[Linked lists have $O(1)$ access to any node.]
-- Linked lists are not guaranteed to have their nodes located in adjacent blocks of memory.
-- Linked lists have an aggregation relationship with nodes.
-===
-- A singly linked list has all the nodes linking in one direction.
-- #redt[A singly linked list can have a tail as well as head. When it does, insertion and deletion at both either end becomes $O(1)$]
-- Insertion/deletion from the front of a singly linked list is $O(1)$.
-- #redt[A singly linked list cannot have a tail member variable that records where the last node is in memory, as it violates the definition of the singly linked list.]
+ you give access to the class you friend in the original class the ability if an object is instantiated for them to use private and protected members of your class. So in class A you must have ‘friend B’ or ‘friend class B’ and then in friend b you will be able to use A stuff.
 
 = Stack & Queue
 
@@ -270,26 +219,6 @@ public:
 - `enqueue(item)` `dequeue()` `isEmpty()`
 - You have access to both the front and back of the queue.
 
-== Quiz
-===
-- #redt[Removing an element from a queue requires the queue to search through all of the remaining elements to update their positions and ensure that the queue is properly ordered, resulting in a time complexity of O(n).]
-- #redt[Solving the Tower of Hanoi maps well to the queue data structure.]
-- Queues are FIFO/LILO.
-- #redt[Since queues involve operations at both ends, they must be implemented using a doubly linked list.]
-
-===
-- #redt[A priority queue implemented using a single queue where each node has a priority value, has both $O(n)$ insertion and $O(n)$ removal.]
-- #redt[A priority queue with n elements that is implemented using multiple queues (with a queue for each priority) have $O(n)$ removal.]
-- A priority queue with n elements that is implemented using multiple queues (with a queue for each priority) have $O(1)$ insertion.
-- A priority queue implemented using a single queue where each node has a priority value, has either $O(n)$ insertion or $O(n)$ removal.
-==== Explanation
-- Priority queues with n nodes implemented using multiple queues, have:
-  - $O(1)$ insertion, as at the time of insertion you know what priority the node will have so you can simply find which queue it should belong to in $O(1)$, and then insert to the back of that queue in $O(1)$.
-  - $O(m)$ removal, where m is the number of queues. This is because we need to run the isEmpty function on up to m queues.
-- Priority queues implemented using one queue will either have either $O(n)$ insertion or removal. Because you have to check who the highest priority is either:
-  - At insertion, to place them in the appropriate position. They "cut" in line.
-  - At removal, to take out the appropriate item.
-
 = Tree
 
 == Tree Traversals
@@ -303,6 +232,10 @@ public:
 - *0 child*: just delete
 - *1 child*: set parent's pointer to point to the one child
 - *2 children*: replace with in-order successor child (leftmost child of right subtree)
+
+== BST Insert
+
+- not balanced so easy
 
 == Trie
 #image("trie.png", width: 60%)
@@ -352,21 +285,8 @@ if (root->children.empty() && !root->isEndOfWord) {
 return root;
 ```
 
-== Quiz
-===
-The height of a binary tree can not have a tight bound
-===
-Running time of searching a Binary Search Tree with n nodes: $Theta("height")$
-===
-The minimum number of nodes that could be in a balanced binary tree of height h: $2^h$
-===
-In a red black, we keep the same number of black nodes between a given node and any other node. The reason for this is: to ensure search is $log(n)$
-===
-For which of the following would a Trie be a good choice of Tree data structure
-- Storing key-value pairs with string keys
-- Storing a collection of unsorted strings
-- #redt[Storing key-value pairs with integer keys]
-- #redt[Storing a collection of unsorted integers]
+To delete a key (word) from a trie, first traverse the trie character by character until you reach the node representing the last letter of the word. At this point, simply set that node's isEndOfWord flag to false. Then, as you backtrack up the trie (often recursively), delete any nodes that are no longer part of any other words (i.e., they are not isEndOfWord for another word and have no other children). This ensures optimal space usage while maintaining the integrity of other words in the trie.
+
 
 = Heap
 
@@ -382,25 +302,41 @@ Swap the node with the largest(smallest) child until the heap property is satisf
 - *Delete*: top to bottom
 - *Heapify*: bottom to top (back to front)
 
-== Quiz
-===
-- A min-heap is a binary tree
-- In a min-heap node after deletion, the maximum levels that a parent will sift down during heapify is O(log(n))
-- #redt[A heap can become an unbalanced tree]
-- #redt[When traversing by level a Heap implemented as a tree, the values will be in order from smallest to largest.]
-===
-When deleting the root node, which of the following should take place to restore the Heap
-- #redt[sift up each of the leaf nodes]
-- #redt[copy the value of the last element to the root and heapify the root element]
-- copy the value of the last element to the root and delete the last element, heapify the root element.
-- #redt[copy the value to the root and heapify each parent node starting from the bottom right parent working across tree to the left, level by level until the root node is heapified]
-===
-maximum depth of a Heap implemented as a Tree: $O(log(n))$
-===
-- Implementing a Heap as a vector will allow faster insertion deletion of elements compared to implementing as a Tree
-- Implementing a Heap as a vector uses less memory compared to implementing as a Tree
-- #redt[Implementing a Heap as a vector better matches the Heap abstraction compared to implementing as a Tree]
-- #redt[Implementing a Heap as a vector results in a lower run-time complexity for all operations compared to implementing as a Tree]
+
+Heap Insertion (Adding a new node)
+
+    Place the new node at the "next available spot": Always add the new element as the next available leaf node to maintain the complete binary tree property. This means you fill levels from left to right.
+
+        Graph Visual: The new node just attaches to the tree at the bottom-most, left-most open position.
+
+    "Bubble Up" (Heapify-Up): Now, compare the newly added node with its parent.
+
+        If the heap property is violated (e.g., in a max-heap, the child is greater than its parent; in a min-heap, the child is smaller than its parent), swap the child and parent.
+
+        Graph Visual: The new node "climbs" up the tree, swapping places with its parent, if it's "more extreme" than its parent (larger in max-heap, smaller in min-heap).
+
+        Repeat: Keep comparing and swapping with the new node's parent until the heap property is satisfied or the node reaches the root.
+
+        Graph Visual: The node keeps moving up level by level until it finds its correct "spot" where it doesn't violate the heap property with its parent.
+Heap Deletion (Removing the root node, typically)
+
+    Note: In a heap, you almost always delete the root (the max element in a max-heap, min element in a min-heap). Deleting arbitrary nodes is more complex.
+
+    Replace Root with Last Leaf: Take the very last leaf node in the heap (the rightmost node on the bottommost level) and move it to the root position. Then, remove the old last leaf node (which is now empty).
+
+        Graph Visual: The element at the very bottom-right of your tree "teleports" to the top. The spot it left behind becomes empty.
+
+    "Bubble Down" (Heapify-Down): The new root might violate the heap property. Compare it with its children.
+
+        In a max-heap: If the new root is smaller than either child, swap it with the larger of its two children.
+
+        In a min-heap: If the new root is larger than either child, swap it with the smaller of its two children.
+
+        Graph Visual: The new root "sinks" down the tree, swapping places with its "most extreme" child (largest in max-heap, smallest in min-heap) if it violates the heap property.
+
+        Repeat: Continue comparing and swapping with the new node's children until the heap property is satisfied (it's "more extreme" than its children, or it becomes a leaf node).
+
+        Graph Visual: The node keeps moving down level by level until it finds its correct "spot" where it doesn't violate the heap property with its children.
 
 = Red Black Tree
 + Root is always black
@@ -478,8 +414,11 @@ Which of the following C++ containers could be shuffled using the C++ shuffle fu
 #image("bigo/bigomega.jpg")
 #image("bigo/bigtheta.jpg")
 #image("bigo/littleo.jpg")
+#image("Height.png")
 #image("complexity.png")
 #include "complexity.typ"
 
+
 ==
 We are implementing a scheduler for choosing the next process to run on a computer. System processes, that keep the computer running are more important than user processes (someone's C++ homework); but otherwise processes should be run on a first come first served basis Assuming we decide to keep all of these processes in a single ordered array, which sorting algorithms could be used (assume the base algorithms as you learned in this course, not variations). *ANSWER: Bubble Sort, Insertion Sort, Merge Sort*
+
